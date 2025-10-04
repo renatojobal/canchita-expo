@@ -43,3 +43,4 @@ This is a fresh Expo project currently containing only the default template code
 The project is in initial setup phase with standard Expo configuration. The main App.js currently shows the default "Open up App.js to start working" message and needs to be replaced with the actual application implementation.
 
 New Architecture is enabled (`newArchEnabled: true` in app.json) indicating this uses React Native's latest architecture improvements.
+- to memorize that the name of the app is Canchita, the repo is called canchita expot just because this app is made with expo
