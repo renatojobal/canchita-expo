@@ -1,57 +1,99 @@
+import React from 'react';
+import { Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, ScrollView } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import './global.css';
-import { Button, Card, Header, BottomNavigation } from './components';
+
+import DashboardScreen from './screens/DashboardScreen';
+import GroupScreen from './screens/GroupScreen';
+import MatchScreen from './screens/MatchScreen';
+import TournamentScreen from './screens/TournamentScreen';
+import ProfileScreen from './screens/ProfileScreen';
+
+const Tab = createBottomTabNavigator();
+
+function TabIcon({ focused, children }) {
+  return (
+    <Text style={{ fontSize: 20, color: focused ? '#16a34a' : '#6b7280' }}>
+      {children}
+    </Text>
+  );
+}
 
 export default function App() {
   return (
-    <View className="flex-1 bg-gray-100">
-      <Header 
-        title="Canchita" 
-        rightAction={<Text className="text-green-600 font-medium">⚙️</Text>}
-      />
-      
-      <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false}>
-        <Card title="Welcome to Canchita! ⚽" className="mb-4">
-          <Text className="text-gray-600 mb-4">
-            Your components have been successfully migrated to React Native with NativeWind!
-          </Text>
-          
-          <View className="space-y-3">
-            <Button variant="primary" onPress={() => console.log('Primary pressed')}>
-              Primary Button
-            </Button>
-            
-            <Button variant="secondary" onPress={() => console.log('Secondary pressed')}>
-              Secondary Button
-            </Button>
-            
-            <Button variant="outline" onPress={() => console.log('Outline pressed')}>
-              Outline Button
-            </Button>
-            
-            <Button variant="danger" size="sm" onPress={() => console.log('Danger pressed')}>
-              Small Danger Button
-            </Button>
-          </View>
-        </Card>
-
-        <Card title="Component Structure" className="mb-4">
-          <Text className="text-gray-600 mb-2">Each component follows the stateless pattern:</Text>
-          <Text className="text-sm text-gray-500">• ComponentConfig.ts - Types and styles</Text>
-          <Text className="text-sm text-gray-500">• ComponentContainer.tsx - Logic and rendering</Text>
-          <Text className="text-sm text-gray-500">• Component.tsx - Main export</Text>
-        </Card>
-
-        <View className="h-20" />
-      </ScrollView>
-
-      <BottomNavigation 
-        currentRoute="/dashboard"
-        onNavigate={(route) => console.log('Navigate to:', route)}
-      />
-      
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarStyle: {
+              height: 64,
+              paddingBottom: 8,
+              paddingTop: 8,
+            },
+            tabBarLabelStyle: {
+              fontSize: 12,
+              marginTop: 4,
+            },
+            tabBarActiveTintColor: '#16a34a',
+            tabBarInactiveTintColor: '#6b7280',
+            headerStyle: {
+              backgroundColor: '#ffffff',
+              borderBottomWidth: 1,
+              borderBottomColor: '#e5e7eb',
+            },
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: '600',
+              color: '#1f2937',
+            },
+          }}
+        >
+          <Tab.Screen
+            name="Dashboard"
+            component={DashboardScreen}
+            options={{
+              title: 'Home',
+              tabBarIcon: ({ focused }) => <TabIcon focused={focused}>🏠</TabIcon>,
+            }}
+          />
+          <Tab.Screen
+            name="Group"
+            component={GroupScreen}
+            options={{
+              title: 'Groups',
+              tabBarIcon: ({ focused }) => <TabIcon focused={focused}>👥</TabIcon>,
+            }}
+          />
+          <Tab.Screen
+            name="Match"
+            component={MatchScreen}
+            options={{
+              title: 'Matches',
+              tabBarIcon: ({ focused }) => <TabIcon focused={focused}>⚽</TabIcon>,
+            }}
+          />
+          <Tab.Screen
+            name="Tournament"
+            component={TournamentScreen}
+            options={{
+              title: 'Cups',
+              tabBarIcon: ({ focused }) => <TabIcon focused={focused}>🏆</TabIcon>,
+            }}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{
+              title: 'Profile',
+              tabBarIcon: ({ focused }) => <TabIcon focused={focused}>👤</TabIcon>,
+            }}
+          />
+        </Tab.Navigator>
+        <StatusBar style="auto" />
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }

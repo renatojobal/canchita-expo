@@ -17,3 +17,8 @@ export type { HeaderProps } from './header/HeaderConfig';
 export { BottomNavigation } from './navigation/BottomNavigation';
 export { BottomNavigationContainer } from './navigation/BottomNavigationContainer';
 export type { BottomNavigationProps, NavigationItem } from './navigation/BottomNavigationConfig';
+
+// PlayerCard components
+export { PlayerCard } from './player-card/PlayerCard';
+export { PlayerCardContainer } from './player-card/PlayerCardContainer';
+export type { PlayerCardProps, PlayerStats } from './player-card/PlayerCardConfig';
