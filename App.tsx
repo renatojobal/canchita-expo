@@ -14,7 +14,12 @@ import ProfileScreen from './screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
-function TabIcon({ focused, children }) {
+interface TabIconProps {
+  focused: boolean;
+  children: string;
+}
+
+function TabIcon({ focused, children }: TabIconProps) {
   return (
     <Text style={{ fontSize: 20, color: focused ? '#16a34a' : '#6b7280' }}>
       {children}

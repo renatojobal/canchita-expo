@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { Card, Button } from '../components';
+import { Card, Button } from '../app/components';
 
 export default function TournamentScreen() {
   return (
