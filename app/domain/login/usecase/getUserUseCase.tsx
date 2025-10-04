@@ -1,7 +1,8 @@
 import { IUserRepository } from '../repositories/IUserRepository';
 import { User } from '../entities/User';
+import { IGetUserUseCase } from './interfaces/IGetUserUseCase';
 
-export class GetUserUseCase {
+export class GetUserUseCase implements IGetUserUseCase {
   constructor(private userRepository: IUserRepository) {}
 
   async executeById(id: string): Promise<User> {

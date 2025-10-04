@@ -1,7 +1,8 @@
 import { IUserRepository } from '../repositories/IUserRepository';
 import { AuthResponse } from '../entities/User';
+import { IRefreshTokenUseCase } from './interfaces/IRefreshTokenUseCase';
 
-export class RefreshTokenUseCase {
+export class RefreshTokenUseCase implements IRefreshTokenUseCase {
   constructor(private userRepository: IUserRepository) {}
 
   async execute(refreshToken: string): Promise<AuthResponse> {

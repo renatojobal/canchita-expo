@@ -1,7 +1,8 @@
 import { IUserRepository } from '../repositories/IUserRepository';
 import { CreateUserRequest, AuthResponse } from '../entities/User';
+import { ICreateUserUseCase } from './interfaces/ICreateUserUseCase';
 
-export class CreateUserUseCase {
+export class CreateUserUseCase implements ICreateUserUseCase {
   constructor(private userRepository: IUserRepository) {}
 
   async execute(userData: CreateUserRequest): Promise<AuthResponse> {

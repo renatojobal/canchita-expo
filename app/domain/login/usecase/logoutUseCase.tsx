@@ -1,6 +1,7 @@
 import { IUserRepository } from '../repositories/IUserRepository';
+import { ILogoutUseCase } from './interfaces/ILogoutUseCase';
 
-export class LogoutUseCase {
+export class LogoutUseCase implements ILogoutUseCase {
   constructor(private userRepository: IUserRepository) {}
 
   async execute(token: string): Promise<void> {

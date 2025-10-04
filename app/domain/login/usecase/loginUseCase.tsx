@@ -1,7 +1,8 @@
 import { IUserRepository } from '../repositories/IUserRepository';
 import { LoginRequest, AuthResponse } from '../entities/User';
+import { ILoginUseCase } from './interfaces/ILoginUseCase';
 
-export class LoginUseCase {
+export class LoginUseCase implements ILoginUseCase {
   constructor(private userRepository: IUserRepository) {}
 
   async execute(credentials: LoginRequest): Promise<AuthResponse> {
