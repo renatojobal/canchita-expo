@@ -1,10 +1,3 @@
-import {
-  User,
-  CreateUserRequest,
-  LoginRequest,
-  AuthResponse,
-} from "../entities/User";
-
 export interface IUserRepository {
   createUser(userData: CreateUserRequest): Promise<AuthResponse>;
   login(credentials: LoginRequest): Promise<AuthResponse>;
