@@ -1,6 +1,6 @@
 import { IUserRepository } from '../repositories/IUserRepository';
-import { LoginRequest, AuthResponse } from '../entities/User';
-import { ILoginUseCase } from './interfaces/ILoginUseCase';
+import { AuthResponse } from '../entities/AuthResponse';
+import { LoginRequest, ILoginUseCase } from './interfaces/ILoginUseCase';
 
 export class LoginUseCase implements ILoginUseCase {
   constructor(private userRepository: IUserRepository) {}

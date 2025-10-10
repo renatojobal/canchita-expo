@@ -1,5 +1,5 @@
 import { IUserRepository } from '../repositories/IUserRepository';
-import { AuthResponse } from '../entities/User';
+import { AuthResponse } from '../entities/AuthResponse';
 import { IRefreshTokenUseCase } from './interfaces/IRefreshTokenUseCase';
 
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
