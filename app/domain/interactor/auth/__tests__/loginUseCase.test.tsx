@@ -1,27 +1,32 @@
 import { LoginUseCase } from "../loginUseCase";
 import { IUserRepository } from "../../../repository/login/IUserRepository";
-import { User } from "../../entities/User";
+import { AuthRepository } from "../../../repository/auth/IAuthRepository";
+import { User } from "../../../entities/User";
 import { LoginRequest } from "../interfaces/ILoginUseCase";
-import { AuthResponse } from "../../entities/AuthResponse";
+import { AuthResponse } from "../../../entities/Session";
 
 describe("LoginUseCase", () => {
   let loginUseCase: LoginUseCase;
+  let mockAuthRepository: jest.Mocked<AuthRepository>;
   let mockUserRepository: jest.Mocked<IUserRepository>;
 
   beforeEach(() => {
-    mockUserRepository = {
+    mockAuthRepository = {
       createUser: jest.fn(),
       login: jest.fn(),
       logout: jest.fn(),
-      getUserById: jest.fn(),
-      getUserByEmail: jest.fn(),
-      updateUser: jest.fn(),
-      deleteUser: jest.fn(),
       refreshToken: jest.fn(),
       validateToken: jest.fn(),
     };
 
-    loginUseCase = new LoginUseCase(mockUserRepository);
+    mockUserRepository = {
+      getUserById: jest.fn(),
+      getUserByEmail: jest.fn(),
+      updateUser: jest.fn(),
+      deleteUser: jest.fn(),
+    };
+
+    loginUseCase = new LoginUseCase(mockAuthRepository, mockUserRepository);
   });
 
   describe("execute", () => {
@@ -47,7 +52,7 @@ describe("LoginUseCase", () => {
 
     it("should login successfully with valid credentials", async () => {
       mockUserRepository.getUserByEmail.mockResolvedValue(mockUser);
-      mockUserRepository.login.mockResolvedValue(mockAuthResponse);
+      mockAuthRepository.login.mockResolvedValue(mockAuthResponse);
 
       const result = await loginUseCase.execute(validCredentials);
 
@@ -55,7 +60,7 @@ describe("LoginUseCase", () => {
       expect(mockUserRepository.getUserByEmail).toHaveBeenCalledWith(
         validCredentials.email
       );
-      expect(mockUserRepository.login).toHaveBeenCalledWith(validCredentials);
+      expect(mockAuthRepository.login).toHaveBeenCalledWith(validCredentials);
     });
 
     it("should throw error if email format is invalid", async () => {
@@ -69,7 +74,7 @@ describe("LoginUseCase", () => {
       ).rejects.toThrow("Invalid email format");
 
       expect(mockUserRepository.getUserByEmail).not.toHaveBeenCalled();
-      expect(mockUserRepository.login).not.toHaveBeenCalled();
+      expect(mockAuthRepository.login).not.toHaveBeenCalled();
     });
 
     it("should throw error if password is empty", async () => {
@@ -83,7 +88,7 @@ describe("LoginUseCase", () => {
       ).rejects.toThrow("Password is required");
 
       expect(mockUserRepository.getUserByEmail).not.toHaveBeenCalled();
-      expect(mockUserRepository.login).not.toHaveBeenCalled();
+      expect(mockAuthRepository.login).not.toHaveBeenCalled();
     });
 
     it("should throw error if user does not exist", async () => {
@@ -96,7 +101,7 @@ describe("LoginUseCase", () => {
       expect(mockUserRepository.getUserByEmail).toHaveBeenCalledWith(
         validCredentials.email
       );
-      expect(mockUserRepository.login).not.toHaveBeenCalled();
+      expect(mockAuthRepository.login).not.toHaveBeenCalled();
     });
 
     it("should throw error if account is deactivated", async () => {
@@ -114,7 +119,7 @@ describe("LoginUseCase", () => {
       expect(mockUserRepository.getUserByEmail).toHaveBeenCalledWith(
         validCredentials.email
       );
-      expect(mockUserRepository.login).not.toHaveBeenCalled();
+      expect(mockAuthRepository.login).not.toHaveBeenCalled();
     });
   });
 });

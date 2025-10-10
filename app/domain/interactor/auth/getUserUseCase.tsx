@@ -1,5 +1,5 @@
 import { IUserRepository } from "../../repository/login/IUserRepository";
-import { User } from "../entities/User";
+import { User } from "../../entities/User";
 import { IGetUserUseCase } from "./interfaces/IGetUserUseCase";
 
 export class GetUserUseCase implements IGetUserUseCase {

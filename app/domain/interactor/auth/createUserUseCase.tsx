@@ -1,15 +1,19 @@
-import { AuthResponse } from "../entities/AuthResponse";
+import { AuthResponse } from "../../entities/Session";
 import { IUserRepository } from "../../repository/login/IUserRepository";
+import { AuthRepository } from "../../repository/auth/IAuthRepository";
 import {
   CreateUserRequest,
   ICreateUserUseCase,
 } from "./interfaces/ICreateUserUseCase";
 
 export class CreateUserUseCase implements ICreateUserUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    private authRepository: AuthRepository,
+    private userRepository: IUserRepository
+  ) {}
 
   async execute(userData: CreateUserRequest): Promise<AuthResponse> {
-    const existingUser = await this.userRepository.getUserById(userData.email);
+    const existingUser = await this.userRepository.getUserByEmail(userData.email);
 
     if (existingUser) {
       throw new Error("User with this email already exists");
@@ -31,7 +35,7 @@ export class CreateUserUseCase implements ICreateUserUseCase {
       throw new Error("First name and last name are required");
     }
 
-    return await this.userRepository.createUser(userData);
+    return await this.authRepository.createUser(userData);
   }
 
   private isValidEmail(email: string): boolean {

@@ -1,26 +1,22 @@
 import { RefreshTokenUseCase } from "../refreshTokenUseCase";
-import { IUserRepository } from "../../../repository/login/IUserRepository";
-import { AuthResponse } from "../../entities/AuthResponse";
-import { User } from "../../entities/User";
+import { AuthRepository } from "../../../repository/auth/IAuthRepository";
+import { AuthResponse } from "../../../entities/Session";
+import { User } from "../../../entities/User";
 
 describe("RefreshTokenUseCase", () => {
   let refreshTokenUseCase: RefreshTokenUseCase;
-  let mockUserRepository: jest.Mocked<IUserRepository>;
+  let mockAuthRepository: jest.Mocked<AuthRepository>;
 
   beforeEach(() => {
-    mockUserRepository = {
+    mockAuthRepository = {
       createUser: jest.fn(),
       login: jest.fn(),
       logout: jest.fn(),
-      getUserById: jest.fn(),
-      getUserByEmail: jest.fn(),
-      updateUser: jest.fn(),
-      deleteUser: jest.fn(),
       refreshToken: jest.fn(),
       validateToken: jest.fn(),
     };
 
-    refreshTokenUseCase = new RefreshTokenUseCase(mockUserRepository);
+    refreshTokenUseCase = new RefreshTokenUseCase(mockAuthRepository);
   });
 
   describe("execute", () => {
@@ -40,12 +36,12 @@ describe("RefreshTokenUseCase", () => {
     };
 
     it("should refresh token successfully with valid refresh token", async () => {
-      mockUserRepository.refreshToken.mockResolvedValue(mockAuthResponse);
+      mockAuthRepository.refreshToken.mockResolvedValue(mockAuthResponse);
 
       const result = await refreshTokenUseCase.execute(validRefreshToken);
 
       expect(result).toEqual(mockAuthResponse);
-      expect(mockUserRepository.refreshToken).toHaveBeenCalledWith(
+      expect(mockAuthRepository.refreshToken).toHaveBeenCalledWith(
         validRefreshToken
       );
     });
@@ -55,11 +51,11 @@ describe("RefreshTokenUseCase", () => {
         "Refresh token is required"
       );
 
-      expect(mockUserRepository.refreshToken).not.toHaveBeenCalled();
+      expect(mockAuthRepository.refreshToken).not.toHaveBeenCalled();
     });
 
     it("should throw error if refresh token is invalid or expired", async () => {
-      mockUserRepository.refreshToken.mockRejectedValue(
+      mockAuthRepository.refreshToken.mockRejectedValue(
         new Error("Token expired")
       );
 
@@ -67,7 +63,7 @@ describe("RefreshTokenUseCase", () => {
         refreshTokenUseCase.execute("invalid-token")
       ).rejects.toThrow("Invalid or expired refresh token");
 
-      expect(mockUserRepository.refreshToken).toHaveBeenCalledWith(
+      expect(mockAuthRepository.refreshToken).toHaveBeenCalledWith(
         "invalid-token"
       );
     });

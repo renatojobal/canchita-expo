@@ -1,9 +1,13 @@
 import { IUserRepository } from "../../repository/login/IUserRepository";
-import { AuthResponse } from "../entities/AuthResponse";
+import { AuthRepository } from "../../repository/auth/IAuthRepository";
+import { AuthResponse } from "../../entities/Session";
 import { LoginRequest, ILoginUseCase } from "./interfaces/ILoginUseCase";
 
 export class LoginUseCase implements ILoginUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    private authRepository: AuthRepository,
+    private userRepository: IUserRepository
+  ) {}
 
   async execute(credentials: LoginRequest): Promise<AuthResponse> {
     if (!this.isValidEmail(credentials.email)) {
@@ -24,7 +28,7 @@ export class LoginUseCase implements ILoginUseCase {
       throw new Error("Account is deactivated");
     }
 
-    return await this.userRepository.login(credentials);
+    return await this.authRepository.login(credentials);
   }
 
   private isValidEmail(email: string): boolean {

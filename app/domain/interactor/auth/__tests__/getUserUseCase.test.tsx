@@ -1,6 +1,6 @@
 import { GetUserUseCase } from "../getUserUseCase";
 import { IUserRepository } from "../../../repository/login/IUserRepository";
-import { User } from "../../entities/User";
+import { User } from "../../../entities/User";
 
 describe("GetUserUseCase", () => {
   let getUserUseCase: GetUserUseCase;
@@ -8,15 +8,10 @@ describe("GetUserUseCase", () => {
 
   beforeEach(() => {
     mockUserRepository = {
-      createUser: jest.fn(),
-      login: jest.fn(),
-      logout: jest.fn(),
       getUserById: jest.fn(),
       getUserByEmail: jest.fn(),
       updateUser: jest.fn(),
       deleteUser: jest.fn(),
-      refreshToken: jest.fn(),
-      validateToken: jest.fn(),
     };
 
     getUserUseCase = new GetUserUseCase(mockUserRepository);

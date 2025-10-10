@@ -1,37 +1,33 @@
 import { LogoutUseCase } from "../logoutUseCase";
-import { IUserRepository } from "../../../repository/login/IUserRepository";
+import { AuthRepository } from "../../../repository/auth/IAuthRepository";
 
 describe("LogoutUseCase", () => {
   let logoutUseCase: LogoutUseCase;
-  let mockUserRepository: jest.Mocked<IUserRepository>;
+  let mockAuthRepository: jest.Mocked<AuthRepository>;
 
   beforeEach(() => {
-    mockUserRepository = {
+    mockAuthRepository = {
       createUser: jest.fn(),
       login: jest.fn(),
       logout: jest.fn(),
-      getUserById: jest.fn(),
-      getUserByEmail: jest.fn(),
-      updateUser: jest.fn(),
-      deleteUser: jest.fn(),
       refreshToken: jest.fn(),
       validateToken: jest.fn(),
     };
 
-    logoutUseCase = new LogoutUseCase(mockUserRepository);
+    logoutUseCase = new LogoutUseCase(mockAuthRepository);
   });
 
   describe("execute", () => {
     const validToken = "valid-token";
 
     it("should logout successfully with valid token", async () => {
-      mockUserRepository.validateToken.mockResolvedValue(true);
-      mockUserRepository.logout.mockResolvedValue(undefined);
+      mockAuthRepository.validateToken.mockResolvedValue(true);
+      mockAuthRepository.logout.mockResolvedValue(undefined);
 
       await logoutUseCase.execute(validToken);
 
-      expect(mockUserRepository.validateToken).toHaveBeenCalledWith(validToken);
-      expect(mockUserRepository.logout).toHaveBeenCalledWith(validToken);
+      expect(mockAuthRepository.validateToken).toHaveBeenCalledWith(validToken);
+      expect(mockAuthRepository.logout).toHaveBeenCalledWith(validToken);
     });
 
     it("should throw error if token is empty", async () => {
@@ -39,21 +35,21 @@ describe("LogoutUseCase", () => {
         "Token is required"
       );
 
-      expect(mockUserRepository.validateToken).not.toHaveBeenCalled();
-      expect(mockUserRepository.logout).not.toHaveBeenCalled();
+      expect(mockAuthRepository.validateToken).not.toHaveBeenCalled();
+      expect(mockAuthRepository.logout).not.toHaveBeenCalled();
     });
 
     it("should throw error if token is invalid", async () => {
-      mockUserRepository.validateToken.mockResolvedValue(false);
+      mockAuthRepository.validateToken.mockResolvedValue(false);
 
       await expect(logoutUseCase.execute("invalid-token")).rejects.toThrow(
         "Invalid token"
       );
 
-      expect(mockUserRepository.validateToken).toHaveBeenCalledWith(
+      expect(mockAuthRepository.validateToken).toHaveBeenCalledWith(
         "invalid-token"
       );
-      expect(mockUserRepository.logout).not.toHaveBeenCalled();
+      expect(mockAuthRepository.logout).not.toHaveBeenCalled();
     });
   });
 });

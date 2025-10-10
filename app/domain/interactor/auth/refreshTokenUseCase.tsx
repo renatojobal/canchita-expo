@@ -1,9 +1,9 @@
-import { IUserRepository } from "../../repository/login/IUserRepository";
-import { AuthResponse } from "../entities/AuthResponse";
+import { AuthRepository } from "../../repository/auth/IAuthRepository";
+import { AuthResponse } from "../../entities/Session";
 import { IRefreshTokenUseCase } from "./interfaces/IRefreshTokenUseCase";
 
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private authRepository: AuthRepository) {}
 
   async execute(refreshToken: string): Promise<AuthResponse> {
     if (!refreshToken.trim()) {
@@ -11,7 +11,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     }
 
     try {
-      return await this.userRepository.refreshToken(refreshToken);
+      return await this.authRepository.refreshToken(refreshToken);
     } catch (error) {
       throw new Error("Invalid or expired refresh token");
     }
