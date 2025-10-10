@@ -1,4 +1,4 @@
-import { AuthResponse } from "../../entities/AuthResponse";
+import { AuthResponse } from "../../entities/Session";
 import { User } from "../../entities/User";
 import { CreateUserRequest } from "../../interactor/auth/interfaces/ICreateUserUseCase";
 import { LoginRequest } from "../../interactor/auth/interfaces/ILoginUseCase";
