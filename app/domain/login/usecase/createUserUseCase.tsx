@@ -1,12 +1,12 @@
+import { AuthResponse } from '../entities/AuthResponse';
 import { IUserRepository } from '../repositories/IUserRepository';
-import { CreateUserRequest, AuthResponse } from '../entities/User';
-import { ICreateUserUseCase } from './interfaces/ICreateUserUseCase';
+import { CreateUserRequest, ICreateUserUseCase } from './interfaces/ICreateUserUseCase';
 
 export class CreateUserUseCase implements ICreateUserUseCase {
   constructor(private userRepository: IUserRepository) {}
 
   async execute(userData: CreateUserRequest): Promise<AuthResponse> {
-    const existingUser = await this.userRepository.getUserByEmail(userData.email);
+    const existingUser = await this.userRepository.getUserById(userData.email);
     
     if (existingUser) {
       throw new Error('User with this email already exists');

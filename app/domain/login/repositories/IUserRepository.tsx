@@ -1,3 +1,8 @@
+import { AuthResponse } from "../entities/AuthResponse";
+import { User } from "../entities/User";
+import { CreateUserRequest } from "../usecase/interfaces/ICreateUserUseCase";
+import { LoginRequest } from "../usecase/interfaces/ILoginUseCase";
+
 export interface IUserRepository {
   createUser(userData: CreateUserRequest): Promise<AuthResponse>;
   login(credentials: LoginRequest): Promise<AuthResponse>;
