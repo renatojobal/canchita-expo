@@ -1,10 +1,10 @@
-import { CreateUserUseCase } from '../createUserUseCase';
-import { IUserRepository } from '../../repositories/IUserRepository';
-import { AuthResponse } from '../../entities/AuthResponse';
-import { User } from '../../entities/User';
-import { CreateUserRequest } from '../interfaces/ICreateUserUseCase';
+import { CreateUserUseCase } from "../createUserUseCase";
+import { IUserRepository } from "../../../repository/login/IUserRepository";
+import { AuthResponse } from "../../entities/AuthResponse";
+import { User } from "../../entities/User";
+import { CreateUserRequest } from "../interfaces/ICreateUserUseCase";
 
-describe('CreateUserUseCase', () => {
+describe("CreateUserUseCase", () => {
   let createUserUseCase: CreateUserUseCase;
   let mockUserRepository: jest.Mocked<IUserRepository>;
 
@@ -24,129 +24,131 @@ describe('CreateUserUseCase', () => {
     createUserUseCase = new CreateUserUseCase(mockUserRepository);
   });
 
-  describe('execute', () => {
+  describe("execute", () => {
     const validUserData: CreateUserRequest = {
-      email: 'test@example.com',
-      password: 'password123',
-      username: 'testuser',
-      firstName: 'Test',
-      lastName: 'User',
+      email: "test@example.com",
+      password: "password123",
+      username: "testuser",
+      firstName: "Test",
+      lastName: "User",
     };
 
     const mockAuthResponse: AuthResponse = {
-      token: 'mock-token',
-      refreshToken: 'mock-refresh-token',
+      token: "mock-token",
+      refreshToken: "mock-refresh-token",
       user: {
-        id: '1',
-        email: 'test@example.com',
-        username: 'testuser',
-        firstName: 'Test',
-        lastName: 'User',
+        id: "1",
+        email: "test@example.com",
+        username: "testuser",
+        firstName: "Test",
+        lastName: "User",
         isActive: true,
       } as User,
     };
 
-    it('should create a user successfully with valid data', async () => {
+    it("should create a user successfully with valid data", async () => {
       mockUserRepository.getUserById.mockResolvedValue(null);
       mockUserRepository.createUser.mockResolvedValue(mockAuthResponse);
 
       const result = await createUserUseCase.execute(validUserData);
 
       expect(result).toEqual(mockAuthResponse);
-      expect(mockUserRepository.getUserById).toHaveBeenCalledWith(validUserData.email);
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith(
+        validUserData.email
+      );
       expect(mockUserRepository.createUser).toHaveBeenCalledWith(validUserData);
     });
 
-    it('should throw error if user already exists', async () => {
+    it("should throw error if user already exists", async () => {
       const existingUser: User = {
-        id: '1',
-        email: 'test@example.com',
-        username: 'testuser',
-        firstName: 'Test',
-        lastName: 'User',
+        id: "1",
+        email: "test@example.com",
+        username: "testuser",
+        firstName: "Test",
+        lastName: "User",
         isActive: true,
       } as User;
 
       mockUserRepository.getUserById.mockResolvedValue(existingUser);
 
       await expect(createUserUseCase.execute(validUserData)).rejects.toThrow(
-        'User with this email already exists'
+        "User with this email already exists"
       );
 
       expect(mockUserRepository.createUser).not.toHaveBeenCalled();
     });
 
-    it('should throw error if email format is invalid', async () => {
+    it("should throw error if email format is invalid", async () => {
       const invalidEmailData: CreateUserRequest = {
         ...validUserData,
-        email: 'invalid-email',
+        email: "invalid-email",
       };
 
       mockUserRepository.getUserById.mockResolvedValue(null);
 
       await expect(createUserUseCase.execute(invalidEmailData)).rejects.toThrow(
-        'Invalid email format'
+        "Invalid email format"
       );
 
       expect(mockUserRepository.createUser).not.toHaveBeenCalled();
     });
 
-    it('should throw error if password is less than 8 characters', async () => {
+    it("should throw error if password is less than 8 characters", async () => {
       const shortPasswordData: CreateUserRequest = {
         ...validUserData,
-        password: 'short',
+        password: "short",
       };
 
       mockUserRepository.getUserById.mockResolvedValue(null);
 
-      await expect(createUserUseCase.execute(shortPasswordData)).rejects.toThrow(
-        'Password must be at least 8 characters long'
-      );
+      await expect(
+        createUserUseCase.execute(shortPasswordData)
+      ).rejects.toThrow("Password must be at least 8 characters long");
 
       expect(mockUserRepository.createUser).not.toHaveBeenCalled();
     });
 
-    it('should throw error if username is empty', async () => {
+    it("should throw error if username is empty", async () => {
       const emptyUsernameData: CreateUserRequest = {
         ...validUserData,
-        username: '   ',
+        username: "   ",
       };
 
       mockUserRepository.getUserById.mockResolvedValue(null);
 
-      await expect(createUserUseCase.execute(emptyUsernameData)).rejects.toThrow(
-        'Username is required'
-      );
+      await expect(
+        createUserUseCase.execute(emptyUsernameData)
+      ).rejects.toThrow("Username is required");
 
       expect(mockUserRepository.createUser).not.toHaveBeenCalled();
     });
 
-    it('should throw error if firstName is empty', async () => {
+    it("should throw error if firstName is empty", async () => {
       const emptyFirstNameData: CreateUserRequest = {
         ...validUserData,
-        firstName: '   ',
+        firstName: "   ",
       };
 
       mockUserRepository.getUserById.mockResolvedValue(null);
 
-      await expect(createUserUseCase.execute(emptyFirstNameData)).rejects.toThrow(
-        'First name and last name are required'
-      );
+      await expect(
+        createUserUseCase.execute(emptyFirstNameData)
+      ).rejects.toThrow("First name and last name are required");
 
       expect(mockUserRepository.createUser).not.toHaveBeenCalled();
     });
 
-    it('should throw error if lastName is empty', async () => {
+    it("should throw error if lastName is empty", async () => {
       const emptyLastNameData: CreateUserRequest = {
         ...validUserData,
-        lastName: '   ',
+        lastName: "   ",
       };
 
       mockUserRepository.getUserById.mockResolvedValue(null);
 
-      await expect(createUserUseCase.execute(emptyLastNameData)).rejects.toThrow(
-        'First name and last name are required'
-      );
+      await expect(
+        createUserUseCase.execute(emptyLastNameData)
+      ).rejects.toThrow("First name and last name are required");
 
       expect(mockUserRepository.createUser).not.toHaveBeenCalled();
     });
