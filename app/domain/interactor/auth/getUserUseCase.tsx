@@ -1,19 +1,19 @@
-import { IUserRepository } from '../repositories/IUserRepository';
-import { User } from '../entities/User';
-import { IGetUserUseCase } from './interfaces/IGetUserUseCase';
+import { IUserRepository } from "../../repository/login/IUserRepository";
+import { User } from "../entities/User";
+import { IGetUserUseCase } from "./interfaces/IGetUserUseCase";
 
 export class GetUserUseCase implements IGetUserUseCase {
   constructor(private userRepository: IUserRepository) {}
 
   async executeById(id: string): Promise<User> {
     if (!id.trim()) {
-      throw new Error('User ID is required');
+      throw new Error("User ID is required");
     }
 
     const user = await this.userRepository.getUserById(id);
-    
+
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     return user;
@@ -21,17 +21,17 @@ export class GetUserUseCase implements IGetUserUseCase {
 
   async executeByEmail(email: string): Promise<User> {
     if (!email.trim()) {
-      throw new Error('Email is required');
+      throw new Error("Email is required");
     }
 
     if (!this.isValidEmail(email)) {
-      throw new Error('Invalid email format');
+      throw new Error("Invalid email format");
     }
 
     const user = await this.userRepository.getUserByEmail(email);
-    
+
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     return user;
