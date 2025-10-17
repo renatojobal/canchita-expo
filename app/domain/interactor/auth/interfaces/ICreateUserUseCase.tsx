@@ -1,4 +1,4 @@
-import { AuthResponse } from "../../entities/AuthResponse";
+import { AuthResponse } from "../../../entities/Session";
 
 export interface ICreateUserUseCase {
   execute(userData: CreateUserRequest): Promise<AuthResponse>;
