@@ -1,5 +1,5 @@
 import { AuthResponse } from "../../entities/Session";
-import { IUserRepository } from "../../repository/login/IUserRepository";
+import { IUserRepository } from "../../repository/userProfile/IUserRepository";
 import { AuthRepository } from "../../repository/auth/IAuthRepository";
 import {
   CreateUserRequest,

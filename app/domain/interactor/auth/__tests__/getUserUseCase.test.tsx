@@ -1,6 +1,6 @@
 import { GetUserUseCase } from "../getUserUseCase";
-import { IUserRepository } from "../../../repository/login/IUserRepository";
-import { User } from "../../../entities/User";
+import { IUserRepository } from "../../../repository/userProfile/IUserRepository";
+import { UserProfile } from "../../../entities/UserProfile";
 
 describe("GetUserUseCase", () => {
   let getUserUseCase: GetUserUseCase;
@@ -8,24 +8,26 @@ describe("GetUserUseCase", () => {
 
   beforeEach(() => {
     mockUserRepository = {
+      createUserProfile: jest.fn(),
       getUserById: jest.fn(),
       getUserByEmail: jest.fn(),
       updateUser: jest.fn(),
       deleteUser: jest.fn(),
+      verifyUserProfile: jest.fn(),
     };
 
     getUserUseCase = new GetUserUseCase(mockUserRepository);
   });
 
   describe("executeById", () => {
-    const mockUser: User = {
+    const mockUser: UserProfile = {
       id: "1",
       email: "test@example.com",
-      username: "testuser",
-      firstName: "Test",
-      lastName: "User",
+      name: "Test User",
       isActive: true,
-    } as User;
+      is_verified: true,
+      created_at: new Date(),
+    } as UserProfile;
 
     it("should get user successfully by id", async () => {
       mockUserRepository.getUserById.mockResolvedValue(mockUser);
@@ -56,14 +58,14 @@ describe("GetUserUseCase", () => {
   });
 
   describe("executeByEmail", () => {
-    const mockUser: User = {
+    const mockUser: UserProfile = {
       id: "1",
       email: "test@example.com",
-      username: "testuser",
-      firstName: "Test",
-      lastName: "User",
+      name: "Test User",
       isActive: true,
-    } as User;
+      is_verified: true,
+      created_at: new Date(),
+    } as UserProfile;
 
     it("should get user successfully by email", async () => {
       mockUserRepository.getUserByEmail.mockResolvedValue(mockUser);

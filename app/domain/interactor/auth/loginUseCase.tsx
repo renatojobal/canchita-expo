@@ -1,4 +1,4 @@
-import { IUserRepository } from "../../repository/login/IUserRepository";
+import { IUserRepository } from "../../repository/userProfile/IUserRepository";
 import { AuthRepository } from "../../repository/auth/IAuthRepository";
 import { AuthResponse } from "../../entities/Session";
 import { LoginRequest, ILoginUseCase } from "./interfaces/ILoginUseCase";

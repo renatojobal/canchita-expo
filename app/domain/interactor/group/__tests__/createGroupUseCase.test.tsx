@@ -1,6 +1,6 @@
 import { CreateGroupUseCase } from "../createGroupUseCase";
 import { IGroupRepository } from "../../../repository/group/IGroupRepository";
-import { IUserProfileRepository } from "../../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../../repository/userProfile/IUserRepository";
 import { Group } from "../../../entities/Group";
 import { UserProfile } from "../../../entities/UserProfile";
 import { CreateGroupRequest } from "../interfaces/ICreateGroupUseCase";
@@ -8,7 +8,7 @@ import { CreateGroupRequest } from "../interfaces/ICreateGroupUseCase";
 describe("CreateGroupUseCase", () => {
   let createGroupUseCase: CreateGroupUseCase;
   let mockGroupRepository: jest.Mocked<IGroupRepository>;
-  let mockUserProfileRepository: jest.Mocked<IUserProfileRepository>;
+  let mockUserRepository: jest.Mocked<IUserRepository>;
 
   beforeEach(() => {
     mockGroupRepository = {
@@ -19,16 +19,16 @@ describe("CreateGroupUseCase", () => {
       deleteGroup: jest.fn(),
     };
 
-    mockUserProfileRepository = {
+    mockUserRepository = {
       createUserProfile: jest.fn(),
-      getUserProfileById: jest.fn(),
-      getUserProfileByEmail: jest.fn(),
-      updateUserProfile: jest.fn(),
-      deleteUserProfile: jest.fn(),
+      getUserById: jest.fn(),
+      getUserByEmail: jest.fn(),
+      updateUser: jest.fn(),
+      deleteUser: jest.fn(),
       verifyUserProfile: jest.fn(),
     };
 
-    createGroupUseCase = new CreateGroupUseCase(mockGroupRepository, mockUserProfileRepository);
+    createGroupUseCase = new CreateGroupUseCase(mockGroupRepository, mockUserRepository);
   });
 
   describe("execute", () => {
@@ -36,8 +36,14 @@ describe("CreateGroupUseCase", () => {
       id: "user-1",
       email: "owner@example.com",
       name: "Owner User",
+      username: "owneruser",
+      firstName: "Owner",
+      lastName: "User",
       is_verified: true,
+      isActive: true,
       created_at: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const validGroupData: CreateGroupRequest = {
@@ -53,13 +59,13 @@ describe("CreateGroupUseCase", () => {
     };
 
     it("should create group successfully with valid data", async () => {
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(mockUserProfile);
+      mockUserRepository.getUserById.mockResolvedValue(mockUserProfile);
       mockGroupRepository.createGroup.mockResolvedValue(mockGroup);
 
       const result = await createGroupUseCase.execute(validGroupData);
 
       expect(result).toEqual(mockGroup);
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith(validGroupData.owner_profile_id);
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith(validGroupData.owner_profile_id);
       expect(mockGroupRepository.createGroup).toHaveBeenCalledWith(validGroupData);
     });
 
@@ -71,7 +77,7 @@ describe("CreateGroupUseCase", () => {
 
       await expect(createGroupUseCase.execute(invalidGroupData)).rejects.toThrow("Group name is required");
 
-      expect(mockUserProfileRepository.getUserProfileById).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).not.toHaveBeenCalled();
       expect(mockGroupRepository.createGroup).not.toHaveBeenCalled();
     });
 
@@ -83,16 +89,16 @@ describe("CreateGroupUseCase", () => {
 
       await expect(createGroupUseCase.execute(invalidGroupData)).rejects.toThrow("Owner profile ID is required");
 
-      expect(mockUserProfileRepository.getUserProfileById).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).not.toHaveBeenCalled();
       expect(mockGroupRepository.createGroup).not.toHaveBeenCalled();
     });
 
     it("should throw error if owner profile not found", async () => {
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(null);
+      mockUserRepository.getUserById.mockResolvedValue(null);
 
       await expect(createGroupUseCase.execute(validGroupData)).rejects.toThrow("Owner profile not found");
 
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith(validGroupData.owner_profile_id);
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith(validGroupData.owner_profile_id);
       expect(mockGroupRepository.createGroup).not.toHaveBeenCalled();
     });
   });

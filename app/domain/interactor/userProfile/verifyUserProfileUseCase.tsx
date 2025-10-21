@@ -1,16 +1,16 @@
-import { IUserProfileRepository } from "../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../repository/userProfile/IUserRepository";
 import { UserProfile } from "../../entities/UserProfile";
 import { IVerifyUserProfileUseCase } from "./interfaces/IVerifyUserProfileUseCase";
 
 export class VerifyUserProfileUseCase implements IVerifyUserProfileUseCase {
-  constructor(private userProfileRepository: IUserProfileRepository) {}
+  constructor(private userRepository: IUserRepository) {}
 
   async execute(id: string): Promise<UserProfile> {
     if (!id.trim()) {
       throw new Error("User profile ID is required");
     }
 
-    const existingProfile = await this.userProfileRepository.getUserProfileById(id);
+    const existingProfile = await this.userRepository.getUserById(id);
     if (!existingProfile) {
       throw new Error("User profile not found");
     }
@@ -19,6 +19,6 @@ export class VerifyUserProfileUseCase implements IVerifyUserProfileUseCase {
       throw new Error("User profile is already verified");
     }
 
-    return await this.userProfileRepository.verifyUserProfile(id);
+    return await this.userRepository.verifyUserProfile(id);
   }
 }

@@ -1,5 +1,4 @@
-import { AuthResponse } from "../../entities/AuthResponse";
-import { User } from "../../entities/User";
+import { AuthResponse } from "../../../entities/Session";
 
 export interface ILoginUseCase {
   execute(credentials: LoginRequest): Promise<AuthResponse>;

@@ -1,7 +1,7 @@
 import { RefreshTokenUseCase } from "../refreshTokenUseCase";
 import { AuthRepository } from "../../../repository/auth/IAuthRepository";
 import { AuthResponse } from "../../../entities/Session";
-import { User } from "../../../entities/User";
+import { UserProfile } from "../../../entities/UserProfile";
 
 describe("RefreshTokenUseCase", () => {
   let refreshTokenUseCase: RefreshTokenUseCase;
@@ -28,11 +28,11 @@ describe("RefreshTokenUseCase", () => {
       user: {
         id: "1",
         email: "test@example.com",
-        username: "testuser",
-        firstName: "Test",
-        lastName: "User",
+        name: "Test User",
         isActive: true,
-      } as User,
+        is_verified: true,
+        created_at: new Date(),
+      } as UserProfile,
     };
 
     it("should refresh token successfully with valid refresh token", async () => {

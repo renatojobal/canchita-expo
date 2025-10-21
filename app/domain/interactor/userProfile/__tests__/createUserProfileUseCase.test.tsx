@@ -1,23 +1,23 @@
 import { CreateUserProfileUseCase } from "../createUserProfileUseCase";
-import { IUserProfileRepository } from "../../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../../repository/userProfile/IUserRepository";
 import { UserProfile } from "../../../entities/UserProfile";
 import { CreateUserProfileRequest } from "../interfaces/ICreateUserProfileUseCase";
 
 describe("CreateUserProfileUseCase", () => {
   let createUserProfileUseCase: CreateUserProfileUseCase;
-  let mockUserProfileRepository: jest.Mocked<IUserProfileRepository>;
+  let mockUserRepository: jest.Mocked<IUserRepository>;
 
   beforeEach(() => {
-    mockUserProfileRepository = {
+    mockUserRepository = {
       createUserProfile: jest.fn(),
-      getUserProfileById: jest.fn(),
-      getUserProfileByEmail: jest.fn(),
-      updateUserProfile: jest.fn(),
-      deleteUserProfile: jest.fn(),
+      getUserById: jest.fn(),
+      getUserByEmail: jest.fn(),
+      updateUser: jest.fn(),
+      deleteUser: jest.fn(),
       verifyUserProfile: jest.fn(),
     };
 
-    createUserProfileUseCase = new CreateUserProfileUseCase(mockUserProfileRepository);
+    createUserProfileUseCase = new CreateUserProfileUseCase(mockUserRepository);
   });
 
   describe("execute", () => {
@@ -31,20 +31,26 @@ describe("CreateUserProfileUseCase", () => {
       id: "1",
       email: "test@example.com",
       name: "Test User",
+      username: "testuser",
+      firstName: "Test",
+      lastName: "User",
       photo_url: "https://example.com/photo.jpg",
       is_verified: false,
+      isActive: true,
       created_at: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     it("should create user profile successfully with valid data", async () => {
-      mockUserProfileRepository.getUserProfileByEmail.mockResolvedValue(null);
-      mockUserProfileRepository.createUserProfile.mockResolvedValue(mockUserProfile);
+      mockUserRepository.getUserByEmail.mockResolvedValue(null);
+      mockUserRepository.createUserProfile.mockResolvedValue(mockUserProfile);
 
       const result = await createUserProfileUseCase.execute(validUserData);
 
       expect(result).toEqual(mockUserProfile);
-      expect(mockUserProfileRepository.getUserProfileByEmail).toHaveBeenCalledWith(validUserData.email);
-      expect(mockUserProfileRepository.createUserProfile).toHaveBeenCalledWith(validUserData);
+      expect(mockUserRepository.getUserByEmail).toHaveBeenCalledWith(validUserData.email);
+      expect(mockUserRepository.createUserProfile).toHaveBeenCalledWith(validUserData);
     });
 
     it("should throw error if email format is invalid", async () => {
@@ -55,8 +61,8 @@ describe("CreateUserProfileUseCase", () => {
 
       await expect(createUserProfileUseCase.execute(invalidEmailData)).rejects.toThrow("Invalid email format");
 
-      expect(mockUserProfileRepository.getUserProfileByEmail).not.toHaveBeenCalled();
-      expect(mockUserProfileRepository.createUserProfile).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserByEmail).not.toHaveBeenCalled();
+      expect(mockUserRepository.createUserProfile).not.toHaveBeenCalled();
     });
 
     it("should throw error if name is empty", async () => {
@@ -67,19 +73,19 @@ describe("CreateUserProfileUseCase", () => {
 
       await expect(createUserProfileUseCase.execute(emptyNameData)).rejects.toThrow("Name is required");
 
-      expect(mockUserProfileRepository.getUserProfileByEmail).not.toHaveBeenCalled();
-      expect(mockUserProfileRepository.createUserProfile).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserByEmail).not.toHaveBeenCalled();
+      expect(mockUserRepository.createUserProfile).not.toHaveBeenCalled();
     });
 
     it("should throw error if user profile with email already exists", async () => {
-      mockUserProfileRepository.getUserProfileByEmail.mockResolvedValue(mockUserProfile);
+      mockUserRepository.getUserByEmail.mockResolvedValue(mockUserProfile);
 
       await expect(createUserProfileUseCase.execute(validUserData)).rejects.toThrow(
         "User profile with this email already exists"
       );
 
-      expect(mockUserProfileRepository.getUserProfileByEmail).toHaveBeenCalledWith(validUserData.email);
-      expect(mockUserProfileRepository.createUserProfile).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserByEmail).toHaveBeenCalledWith(validUserData.email);
+      expect(mockUserRepository.createUserProfile).not.toHaveBeenCalled();
     });
   });
 });

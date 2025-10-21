@@ -1,23 +1,23 @@
 import { UpdateUserProfileUseCase } from "../updateUserProfileUseCase";
-import { IUserProfileRepository } from "../../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../../repository/userProfile/IUserRepository";
 import { UserProfile } from "../../../entities/UserProfile";
 import { UpdateUserProfileRequest } from "../interfaces/IUpdateUserProfileUseCase";
 
 describe("UpdateUserProfileUseCase", () => {
   let updateUserProfileUseCase: UpdateUserProfileUseCase;
-  let mockUserProfileRepository: jest.Mocked<IUserProfileRepository>;
+  let mockUserRepository: jest.Mocked<IUserRepository>;
 
   beforeEach(() => {
-    mockUserProfileRepository = {
+    mockUserRepository = {
       createUserProfile: jest.fn(),
-      getUserProfileById: jest.fn(),
-      getUserProfileByEmail: jest.fn(),
-      updateUserProfile: jest.fn(),
-      deleteUserProfile: jest.fn(),
+      getUserById: jest.fn(),
+      getUserByEmail: jest.fn(),
+      updateUser: jest.fn(),
+      deleteUser: jest.fn(),
       verifyUserProfile: jest.fn(),
     };
 
-    updateUserProfileUseCase = new UpdateUserProfileUseCase(mockUserProfileRepository);
+    updateUserProfileUseCase = new UpdateUserProfileUseCase(mockUserRepository);
   });
 
   describe("execute", () => {
@@ -25,8 +25,14 @@ describe("UpdateUserProfileUseCase", () => {
       id: "1",
       email: "test@example.com",
       name: "Test User",
+      username: "testuser",
+      firstName: "Test",
+      lastName: "User",
       is_verified: false,
+      isActive: true,
       created_at: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const updatedUserProfile: UserProfile = {
@@ -39,14 +45,14 @@ describe("UpdateUserProfileUseCase", () => {
         name: "Updated Name",
       };
 
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(mockUserProfile);
-      mockUserProfileRepository.updateUserProfile.mockResolvedValue(updatedUserProfile);
+      mockUserRepository.getUserById.mockResolvedValue(mockUserProfile);
+      mockUserRepository.updateUser.mockResolvedValue(updatedUserProfile);
 
       const result = await updateUserProfileUseCase.execute("1", updateData);
 
       expect(result).toEqual(updatedUserProfile);
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith("1");
-      expect(mockUserProfileRepository.updateUserProfile).toHaveBeenCalledWith("1", updateData);
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith("1");
+      expect(mockUserRepository.updateUser).toHaveBeenCalledWith("1", updateData);
     });
 
     it("should throw error if ID is empty", async () => {
@@ -58,8 +64,8 @@ describe("UpdateUserProfileUseCase", () => {
         "User profile ID is required"
       );
 
-      expect(mockUserProfileRepository.getUserProfileById).not.toHaveBeenCalled();
-      expect(mockUserProfileRepository.updateUserProfile).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).not.toHaveBeenCalled();
+      expect(mockUserRepository.updateUser).not.toHaveBeenCalled();
     });
 
     it("should throw error if user profile not found", async () => {
@@ -67,12 +73,12 @@ describe("UpdateUserProfileUseCase", () => {
         name: "Updated Name",
       };
 
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(null);
+      mockUserRepository.getUserById.mockResolvedValue(null);
 
       await expect(updateUserProfileUseCase.execute("999", updateData)).rejects.toThrow("User profile not found");
 
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith("999");
-      expect(mockUserProfileRepository.updateUserProfile).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith("999");
+      expect(mockUserRepository.updateUser).not.toHaveBeenCalled();
     });
 
     it("should throw error if name is empty", async () => {
@@ -80,12 +86,12 @@ describe("UpdateUserProfileUseCase", () => {
         name: "   ",
       };
 
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(mockUserProfile);
+      mockUserRepository.getUserById.mockResolvedValue(mockUserProfile);
 
       await expect(updateUserProfileUseCase.execute("1", updateData)).rejects.toThrow("Name cannot be empty");
 
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith("1");
-      expect(mockUserProfileRepository.updateUserProfile).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith("1");
+      expect(mockUserRepository.updateUser).not.toHaveBeenCalled();
     });
   });
 });

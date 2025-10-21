@@ -1,12 +1,12 @@
 import { IGroupRepository } from "../../repository/group/IGroupRepository";
-import { IUserProfileRepository } from "../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../repository/userProfile/IUserRepository";
 import { Group } from "../../entities/Group";
 import { CreateGroupRequest, ICreateGroupUseCase } from "./interfaces/ICreateGroupUseCase";
 
 export class CreateGroupUseCase implements ICreateGroupUseCase {
   constructor(
     private groupRepository: IGroupRepository,
-    private userProfileRepository: IUserProfileRepository
+    private userRepository: IUserRepository
   ) {}
 
   async execute(groupData: CreateGroupRequest): Promise<Group> {
@@ -18,7 +18,7 @@ export class CreateGroupUseCase implements ICreateGroupUseCase {
       throw new Error("Owner profile ID is required");
     }
 
-    const ownerProfile = await this.userProfileRepository.getUserProfileById(groupData.owner_profile_id);
+    const ownerProfile = await this.userRepository.getUserById(groupData.owner_profile_id);
     if (!ownerProfile) {
       throw new Error("Owner profile not found");
     }

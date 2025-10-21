@@ -1,11 +1,11 @@
-import { IUserRepository } from "../../repository/login/IUserRepository";
-import { User } from "../../entities/User";
+import { IUserRepository } from "../../repository/userProfile/IUserRepository";
+import { UserProfile } from "../../entities/UserProfile";
 import { IGetUserUseCase } from "./interfaces/IGetUserUseCase";
 
 export class GetUserUseCase implements IGetUserUseCase {
   constructor(private userRepository: IUserRepository) {}
 
-  async executeById(id: string): Promise<User> {
+  async executeById(id: string): Promise<UserProfile> {
     if (!id.trim()) {
       throw new Error("User ID is required");
     }
@@ -19,7 +19,7 @@ export class GetUserUseCase implements IGetUserUseCase {
     return user;
   }
 
-  async executeByEmail(email: string): Promise<User> {
+  async executeByEmail(email: string): Promise<UserProfile> {
     if (!email.trim()) {
       throw new Error("Email is required");
     }

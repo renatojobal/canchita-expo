@@ -1,6 +1,6 @@
-import { User } from '../../entities/User';
+import { UserProfile } from '../../../entities/UserProfile';
 
 export interface IGetUserUseCase {
-  executeById(id: string): Promise<User>;
-  executeByEmail(email: string): Promise<User>;
+  executeById(id: string): Promise<UserProfile>;
+  executeByEmail(email: string): Promise<UserProfile>;
 }

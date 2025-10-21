@@ -1,8 +1,8 @@
 import { CreateUserUseCase } from "../createUserUseCase";
-import { IUserRepository } from "../../../repository/login/IUserRepository";
+import { IUserRepository } from "../../../repository/userProfile/IUserRepository";
 import { AuthRepository } from "../../../repository/auth/IAuthRepository";
 import { AuthResponse } from "../../../entities/Session";
-import { User } from "../../../entities/User";
+import { UserProfile } from "../../../entities/UserProfile";
 import { CreateUserRequest } from "../interfaces/ICreateUserUseCase";
 
 describe("CreateUserUseCase", () => {
@@ -20,10 +20,12 @@ describe("CreateUserUseCase", () => {
     };
 
     mockUserRepository = {
+      createUserProfile: jest.fn(),
       getUserById: jest.fn(),
       getUserByEmail: jest.fn(),
       updateUser: jest.fn(),
       deleteUser: jest.fn(),
+      verifyUserProfile: jest.fn(),
     };
 
     createUserUseCase = new CreateUserUseCase(mockAuthRepository, mockUserRepository);
@@ -48,7 +50,7 @@ describe("CreateUserUseCase", () => {
         firstName: "Test",
         lastName: "User",
         isActive: true,
-      } as User,
+      } as UserProfile,
     };
 
     it("should create a user successfully with valid data", async () => {
@@ -65,14 +67,14 @@ describe("CreateUserUseCase", () => {
     });
 
     it("should throw error if user already exists", async () => {
-      const existingUser: User = {
+      const existingUser: UserProfile = {
         id: "1",
         email: "test@example.com",
         username: "testuser",
         firstName: "Test",
         lastName: "User",
         isActive: true,
-      } as User;
+      } as UserProfile;
 
       mockUserRepository.getUserByEmail.mockResolvedValue(existingUser);
 

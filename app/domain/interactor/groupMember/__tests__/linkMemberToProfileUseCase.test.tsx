@@ -1,13 +1,13 @@
 import { LinkMemberToProfileUseCase } from "../linkMemberToProfileUseCase";
 import { IGroupMemberRepository } from "../../../repository/groupMember/IGroupMemberRepository";
-import { IUserProfileRepository } from "../../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../../repository/userProfile/IUserRepository";
 import { GroupMember } from "../../../entities/GroupMember";
 import { UserProfile } from "../../../entities/UserProfile";
 
 describe("LinkMemberToProfileUseCase", () => {
   let linkMemberToProfileUseCase: LinkMemberToProfileUseCase;
   let mockGroupMemberRepository: jest.Mocked<IGroupMemberRepository>;
-  let mockUserProfileRepository: jest.Mocked<IUserProfileRepository>;
+  let mockUserRepository: jest.Mocked<IUserRepository>;
 
   beforeEach(() => {
     mockGroupMemberRepository = {
@@ -19,18 +19,18 @@ describe("LinkMemberToProfileUseCase", () => {
       linkMemberToProfile: jest.fn(),
     };
 
-    mockUserProfileRepository = {
+    mockUserRepository = {
       createUserProfile: jest.fn(),
-      getUserProfileById: jest.fn(),
-      getUserProfileByEmail: jest.fn(),
-      updateUserProfile: jest.fn(),
-      deleteUserProfile: jest.fn(),
+      getUserById: jest.fn(),
+      getUserByEmail: jest.fn(),
+      updateUser: jest.fn(),
+      deleteUser: jest.fn(),
       verifyUserProfile: jest.fn(),
     };
 
     linkMemberToProfileUseCase = new LinkMemberToProfileUseCase(
       mockGroupMemberRepository,
-      mockUserProfileRepository
+      mockUserRepository
     );
   });
 
@@ -48,8 +48,14 @@ describe("LinkMemberToProfileUseCase", () => {
       id: "profile-1",
       email: "member@example.com",
       name: "Test Member",
+      username: "testmember",
+      firstName: "Test",
+      lastName: "Member",
       is_verified: true,
+      isActive: true,
       created_at: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const linkedMember: GroupMember = {
@@ -60,14 +66,14 @@ describe("LinkMemberToProfileUseCase", () => {
 
     it("should link member to profile successfully", async () => {
       mockGroupMemberRepository.getMemberById.mockResolvedValue(mockMember);
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(mockUserProfile);
+      mockUserRepository.getUserById.mockResolvedValue(mockUserProfile);
       mockGroupMemberRepository.linkMemberToProfile.mockResolvedValue(linkedMember);
 
       const result = await linkMemberToProfileUseCase.execute("member-1", "profile-1");
 
       expect(result).toEqual(linkedMember);
       expect(mockGroupMemberRepository.getMemberById).toHaveBeenCalledWith("member-1");
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith("profile-1");
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith("profile-1");
       expect(mockGroupMemberRepository.linkMemberToProfile).toHaveBeenCalledWith("member-1", "profile-1");
     });
 
@@ -75,7 +81,7 @@ describe("LinkMemberToProfileUseCase", () => {
       await expect(linkMemberToProfileUseCase.execute("   ", "profile-1")).rejects.toThrow("Member ID is required");
 
       expect(mockGroupMemberRepository.getMemberById).not.toHaveBeenCalled();
-      expect(mockUserProfileRepository.getUserProfileById).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).not.toHaveBeenCalled();
       expect(mockGroupMemberRepository.linkMemberToProfile).not.toHaveBeenCalled();
     });
 
@@ -83,7 +89,7 @@ describe("LinkMemberToProfileUseCase", () => {
       await expect(linkMemberToProfileUseCase.execute("member-1", "   ")).rejects.toThrow("Profile ID is required");
 
       expect(mockGroupMemberRepository.getMemberById).not.toHaveBeenCalled();
-      expect(mockUserProfileRepository.getUserProfileById).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).not.toHaveBeenCalled();
       expect(mockGroupMemberRepository.linkMemberToProfile).not.toHaveBeenCalled();
     });
 
@@ -95,20 +101,20 @@ describe("LinkMemberToProfileUseCase", () => {
       );
 
       expect(mockGroupMemberRepository.getMemberById).toHaveBeenCalledWith("member-999");
-      expect(mockUserProfileRepository.getUserProfileById).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).not.toHaveBeenCalled();
       expect(mockGroupMemberRepository.linkMemberToProfile).not.toHaveBeenCalled();
     });
 
     it("should throw error if user profile not found", async () => {
       mockGroupMemberRepository.getMemberById.mockResolvedValue(mockMember);
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(null);
+      mockUserRepository.getUserById.mockResolvedValue(null);
 
       await expect(linkMemberToProfileUseCase.execute("member-1", "profile-999")).rejects.toThrow(
         "User profile not found"
       );
 
       expect(mockGroupMemberRepository.getMemberById).toHaveBeenCalledWith("member-1");
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith("profile-999");
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith("profile-999");
       expect(mockGroupMemberRepository.linkMemberToProfile).not.toHaveBeenCalled();
     });
 
@@ -119,14 +125,14 @@ describe("LinkMemberToProfileUseCase", () => {
       };
 
       mockGroupMemberRepository.getMemberById.mockResolvedValue(alreadyLinkedMember);
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(mockUserProfile);
+      mockUserRepository.getUserById.mockResolvedValue(mockUserProfile);
 
       await expect(linkMemberToProfileUseCase.execute("member-1", "profile-1")).rejects.toThrow(
         "Member is already linked to a profile"
       );
 
       expect(mockGroupMemberRepository.getMemberById).toHaveBeenCalledWith("member-1");
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith("profile-1");
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith("profile-1");
       expect(mockGroupMemberRepository.linkMemberToProfile).not.toHaveBeenCalled();
     });
   });

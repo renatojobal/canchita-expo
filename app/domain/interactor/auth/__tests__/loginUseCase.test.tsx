@@ -1,7 +1,7 @@
 import { LoginUseCase } from "../loginUseCase";
-import { IUserRepository } from "../../../repository/login/IUserRepository";
+import { IUserRepository } from "../../../repository/userProfile/IUserRepository";
 import { AuthRepository } from "../../../repository/auth/IAuthRepository";
-import { User } from "../../../entities/User";
+import { UserProfile } from "../../../entities/UserProfile";
 import { LoginRequest } from "../interfaces/ILoginUseCase";
 import { AuthResponse } from "../../../entities/Session";
 
@@ -20,10 +20,12 @@ describe("LoginUseCase", () => {
     };
 
     mockUserRepository = {
+      createUserProfile: jest.fn(),
       getUserById: jest.fn(),
       getUserByEmail: jest.fn(),
       updateUser: jest.fn(),
       deleteUser: jest.fn(),
+      verifyUserProfile: jest.fn(),
     };
 
     loginUseCase = new LoginUseCase(mockAuthRepository, mockUserRepository);
@@ -35,14 +37,14 @@ describe("LoginUseCase", () => {
       password: "password123",
     };
 
-    const mockUser: User = {
+    const mockUser: UserProfile = {
       id: "1",
       email: "test@example.com",
-      username: "testuser",
-      firstName: "Test",
-      lastName: "User",
+      name: "Test User",
       isActive: true,
-    } as User;
+      is_verified: true,
+      created_at: new Date(),
+    } as UserProfile;
 
     const mockAuthResponse: AuthResponse = {
       token: "mock-token",
@@ -105,7 +107,7 @@ describe("LoginUseCase", () => {
     });
 
     it("should throw error if account is deactivated", async () => {
-      const inactiveUser: User = {
+      const inactiveUser: UserProfile = {
         ...mockUser,
         isActive: false,
       };

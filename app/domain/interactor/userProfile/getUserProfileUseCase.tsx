@@ -1,15 +1,15 @@
-import { IUserProfileRepository } from "../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../repository/userProfile/IUserRepository";
 import { UserProfile } from "../../entities/UserProfile";
 import { IGetUserProfileUseCase } from "./interfaces/IGetUserProfileUseCase";
 
 export class GetUserProfileUseCase implements IGetUserProfileUseCase {
-  constructor(private userProfileRepository: IUserProfileRepository) {}
+  constructor(private userRepository: IUserRepository) {}
 
   async execute(id: string): Promise<UserProfile | null> {
     if (!id.trim()) {
       throw new Error("User profile ID is required");
     }
 
-    return await this.userProfileRepository.getUserProfileById(id);
+    return await this.userRepository.getUserById(id);
   }
 }

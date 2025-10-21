@@ -1,9 +1,9 @@
-import { IUserProfileRepository } from "../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../repository/userProfile/IUserRepository";
 import { UserProfile } from "../../entities/UserProfile";
 import { CreateUserProfileRequest, ICreateUserProfileUseCase } from "./interfaces/ICreateUserProfileUseCase";
 
 export class CreateUserProfileUseCase implements ICreateUserProfileUseCase {
-  constructor(private userProfileRepository: IUserProfileRepository) {}
+  constructor(private userRepository: IUserRepository) {}
 
   async execute(userData: CreateUserProfileRequest): Promise<UserProfile> {
     if (!this.isValidEmail(userData.email)) {
@@ -14,12 +14,12 @@ export class CreateUserProfileUseCase implements ICreateUserProfileUseCase {
       throw new Error("Name is required");
     }
 
-    const existingProfile = await this.userProfileRepository.getUserProfileByEmail(userData.email);
+    const existingProfile = await this.userRepository.getUserByEmail(userData.email);
     if (existingProfile) {
       throw new Error("User profile with this email already exists");
     }
 
-    return await this.userProfileRepository.createUserProfile(userData);
+    return await this.userRepository.createUserProfile(userData);
   }
 
   private isValidEmail(email: string): boolean {

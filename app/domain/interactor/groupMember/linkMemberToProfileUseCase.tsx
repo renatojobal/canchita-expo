@@ -1,12 +1,12 @@
 import { IGroupMemberRepository } from "../../repository/groupMember/IGroupMemberRepository";
-import { IUserProfileRepository } from "../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../repository/userProfile/IUserRepository";
 import { GroupMember } from "../../entities/GroupMember";
 import { ILinkMemberToProfileUseCase } from "./interfaces/ILinkMemberToProfileUseCase";
 
 export class LinkMemberToProfileUseCase implements ILinkMemberToProfileUseCase {
   constructor(
     private groupMemberRepository: IGroupMemberRepository,
-    private userProfileRepository: IUserProfileRepository
+    private userRepository: IUserRepository
   ) {}
 
   async execute(memberId: string, profileId: string): Promise<GroupMember> {
@@ -23,7 +23,7 @@ export class LinkMemberToProfileUseCase implements ILinkMemberToProfileUseCase {
       throw new Error("Member not found");
     }
 
-    const profile = await this.userProfileRepository.getUserProfileById(profileId);
+    const profile = await this.userRepository.getUserById(profileId);
     if (!profile) {
       throw new Error("User profile not found");
     }

@@ -1,22 +1,22 @@
 import { VerifyUserProfileUseCase } from "../verifyUserProfileUseCase";
-import { IUserProfileRepository } from "../../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../../repository/userProfile/IUserRepository";
 import { UserProfile } from "../../../entities/UserProfile";
 
 describe("VerifyUserProfileUseCase", () => {
   let verifyUserProfileUseCase: VerifyUserProfileUseCase;
-  let mockUserProfileRepository: jest.Mocked<IUserProfileRepository>;
+  let mockUserRepository: jest.Mocked<IUserRepository>;
 
   beforeEach(() => {
-    mockUserProfileRepository = {
+    mockUserRepository = {
       createUserProfile: jest.fn(),
-      getUserProfileById: jest.fn(),
-      getUserProfileByEmail: jest.fn(),
-      updateUserProfile: jest.fn(),
-      deleteUserProfile: jest.fn(),
+      getUserById: jest.fn(),
+      getUserByEmail: jest.fn(),
+      updateUser: jest.fn(),
+      deleteUser: jest.fn(),
       verifyUserProfile: jest.fn(),
     };
 
-    verifyUserProfileUseCase = new VerifyUserProfileUseCase(mockUserProfileRepository);
+    verifyUserProfileUseCase = new VerifyUserProfileUseCase(mockUserRepository);
   });
 
   describe("execute", () => {
@@ -24,8 +24,14 @@ describe("VerifyUserProfileUseCase", () => {
       id: "1",
       email: "test@example.com",
       name: "Test User",
+      username: "testuser",
+      firstName: "Test",
+      lastName: "User",
       is_verified: false,
+      isActive: true,
       created_at: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const verifiedUserProfile: UserProfile = {
@@ -34,30 +40,30 @@ describe("VerifyUserProfileUseCase", () => {
     };
 
     it("should verify user profile successfully", async () => {
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(mockUserProfile);
-      mockUserProfileRepository.verifyUserProfile.mockResolvedValue(verifiedUserProfile);
+      mockUserRepository.getUserById.mockResolvedValue(mockUserProfile);
+      mockUserRepository.verifyUserProfile.mockResolvedValue(verifiedUserProfile);
 
       const result = await verifyUserProfileUseCase.execute("1");
 
       expect(result).toEqual(verifiedUserProfile);
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith("1");
-      expect(mockUserProfileRepository.verifyUserProfile).toHaveBeenCalledWith("1");
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith("1");
+      expect(mockUserRepository.verifyUserProfile).toHaveBeenCalledWith("1");
     });
 
     it("should throw error if ID is empty", async () => {
       await expect(verifyUserProfileUseCase.execute("   ")).rejects.toThrow("User profile ID is required");
 
-      expect(mockUserProfileRepository.getUserProfileById).not.toHaveBeenCalled();
-      expect(mockUserProfileRepository.verifyUserProfile).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).not.toHaveBeenCalled();
+      expect(mockUserRepository.verifyUserProfile).not.toHaveBeenCalled();
     });
 
     it("should throw error if user profile not found", async () => {
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(null);
+      mockUserRepository.getUserById.mockResolvedValue(null);
 
       await expect(verifyUserProfileUseCase.execute("999")).rejects.toThrow("User profile not found");
 
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith("999");
-      expect(mockUserProfileRepository.verifyUserProfile).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith("999");
+      expect(mockUserRepository.verifyUserProfile).not.toHaveBeenCalled();
     });
 
     it("should throw error if user profile is already verified", async () => {
@@ -66,12 +72,12 @@ describe("VerifyUserProfileUseCase", () => {
         is_verified: true,
       };
 
-      mockUserProfileRepository.getUserProfileById.mockResolvedValue(alreadyVerified);
+      mockUserRepository.getUserById.mockResolvedValue(alreadyVerified);
 
       await expect(verifyUserProfileUseCase.execute("1")).rejects.toThrow("User profile is already verified");
 
-      expect(mockUserProfileRepository.getUserProfileById).toHaveBeenCalledWith("1");
-      expect(mockUserProfileRepository.verifyUserProfile).not.toHaveBeenCalled();
+      expect(mockUserRepository.getUserById).toHaveBeenCalledWith("1");
+      expect(mockUserRepository.verifyUserProfile).not.toHaveBeenCalled();
     });
   });
 });

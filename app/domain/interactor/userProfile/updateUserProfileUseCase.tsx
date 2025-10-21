@@ -1,16 +1,16 @@
-import { IUserProfileRepository } from "../../repository/userProfile/IUserProfileRepository";
+import { IUserRepository } from "../../repository/userProfile/IUserRepository";
 import { UserProfile } from "../../entities/UserProfile";
 import { UpdateUserProfileRequest, IUpdateUserProfileUseCase } from "./interfaces/IUpdateUserProfileUseCase";
 
 export class UpdateUserProfileUseCase implements IUpdateUserProfileUseCase {
-  constructor(private userProfileRepository: IUserProfileRepository) {}
+  constructor(private userRepository: IUserRepository) {}
 
   async execute(id: string, userData: UpdateUserProfileRequest): Promise<UserProfile> {
     if (!id.trim()) {
       throw new Error("User profile ID is required");
     }
 
-    const existingProfile = await this.userProfileRepository.getUserProfileById(id);
+    const existingProfile = await this.userRepository.getUserById(id);
     if (!existingProfile) {
       throw new Error("User profile not found");
     }
@@ -19,6 +19,6 @@ export class UpdateUserProfileUseCase implements IUpdateUserProfileUseCase {
       throw new Error("Name cannot be empty");
     }
 
-    return await this.userProfileRepository.updateUserProfile(id, userData);
+    return await this.userRepository.updateUser(id, userData);
   }
 }
